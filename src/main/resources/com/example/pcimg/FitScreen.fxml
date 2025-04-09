@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="754.0" spacing="5.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.pcimg.FitController">
+
+    <children>
+        <Label text="Time to get fit">
+            <font>
+                <Font name="Comic Sans MS" size="12.0" />
+            </font>
+        </Label>
+
+        <Label text="Enter path of Dataset">
+            <font>
+                <Font name="Comic Sans MS" size="12.0" />
+            </font>
+        </Label>
+
+        <HBox spacing="5">
+            <TextField fx:id="datasetTextField" HBox.hgrow="ALWAYS" />
+            <Button text="Browse…" onAction="#onBrowseDataset"/>
+        </HBox>
+
+        <Button fx:id="fitButton" text="Fit" onAction="#onFitButtonClick"/>
+        <Button fx:id="greetingButton"
+                text="Go to Greeting Screen"
+                onAction="#handleGreetingScreen"/>
+    </children>
+
+    <padding>
+        <Insets top="100.0" />
+    </padding>
+</VBox>

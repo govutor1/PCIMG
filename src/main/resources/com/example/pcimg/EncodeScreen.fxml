@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="TOP_CENTER" spacing="5.0"
+      xmlns="http://javafx.com/javafx/17.0.12"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.pcimg.EncodeController"
+      prefWidth="754.0" prefHeight="400.0">
+   <padding>
+      <Insets top="100.0"/>
+   </padding>
+   <children>
+
+      <Label text="Select image file:"/>
+      <HBox spacing="5">
+         <TextField fx:id="imageTextField" HBox.hgrow="ALWAYS" />
+         <Button text="Browse…" onAction="#onBrowseImage"/>
+      </HBox>
+
+      <Label text="Select PCA fit file:"/>
+      <HBox spacing="5">
+         <TextField fx:id="fitTextField" HBox.hgrow="ALWAYS" />
+         <Button text="Browse…" onAction="#onBrowseFit"/>
+      </HBox>
+
+      <Button fx:id="encodeButton" text="Encode"/>
+      <Button fx:id="greetingButton"
+              text="Go to Greeting Screen"
+              onAction="#handleGreetingScreen"/>
+   </children>
+</VBox>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17.0.12"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.pcimg.DecodeController"
+      alignment="TOP_CENTER" spacing="10.0"
+      prefWidth="754.0" prefHeight="400.0">
+
+    <padding>
+        <Insets top="50" left="20" right="20" bottom="20"/>
+    </padding>
+
+    <Label text="Decoding Time" />
+
+    <Label text="Select compressed matrix:"/>
+    <HBox spacing="5">
+        <TextField fx:id="compressedImageTextField" HBox.hgrow="ALWAYS"/>
+        <Button text="Browse…" onAction="#onBrowseCompressed"/>
+    </HBox>
+
+    <Label text="Select PCA fit file:"/>
+    <HBox spacing="5">
+        <TextField fx:id="fitTextField" HBox.hgrow="ALWAYS"/>
+        <Button text="Browse…" onAction="#onBrowseFit"/>
+    </HBox>
+
+    <HBox spacing="10">
+        <Button fx:id="decodeButton" text="Decode"/>
+        <Button text="Go to Greeting Screen" onAction="#handleGreetingScreen"/>
+    </HBox>
+</VBox>
