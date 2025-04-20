@@ -87,16 +87,38 @@ public class PCA implements Serializable {
      * @param x           the input data matrix where each row is a sample and each column is a feature
      * @param outfeatures the number of principal components (eigenvectors) to retain
      */
-    public void fit(Matrix x, int outfeatures) {
+    public void fit(Matrix x, int outfeatures) throws Exception {
         x = x.clone();
         System.out.println("Normalizing");
         normalizeData(x);
         System.out.println("covving");
         Matrix cov = x.transpose().dot(x);
 
+        // Optional: print a specific row from the covariance matrix
+        System.out.println(cov.getR(391));
+
+
+
         System.out.println("Eigening");
         Matrix.Pair eigenPair = Matrix.eigen(cov);
         Matrix sortedVectors = sortEigenVectors(eigenPair.getFirst(), eigenPair.getSecond());
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("maniak.txt"))) {
+            int rows = eigenPair.getSecond().getHeight();
+            int cols = eigenPair.getSecond().getWidth();
+            for (int i = 0; i < rows; i++) {
+                StringBuilder sb = new StringBuilder();
+                for (int j = 0; j < cols; j++) {
+                    sb.append(eigenPair.getSecond().get(i, j));
+                    if (j < cols - 1) {
+                        sb.append(", ");
+                    }
+                }
+                writer.write(sb.toString());
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            System.err.println("Error writing covariance matrix to file: " + e.getMessage());
+        }
         v = sortedVectors.getSubMatrix(0, sortedVectors.getHeight(), 0, outfeatures);
     }
 

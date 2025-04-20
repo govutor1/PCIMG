@@ -20,6 +20,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 
 public class FitController {
@@ -124,7 +125,7 @@ public class FitController {
      * @throws IOException if an error occurs during file I/O operations
      */
     @FXML
-    private void onFitButtonClick() throws IOException {
+    private void onFitButtonClick() throws Exception {
         String filePath = datasetTextField.getText();
 
         boolean skipHeader = true;
@@ -152,7 +153,7 @@ public class FitController {
 
 
         PCA pca = new PCA(dataMatrix.getWidth());
-        pca.fit(dataMatrix, dataMatrix.getColumnCount() *8/10);
+        pca.fit(dataMatrix, dataMatrix.getColumnCount() *5/10);
         pca.saveToFile("PCAMagnivFile");
         ;
         for (int i = 0; i <10 ; i++) {

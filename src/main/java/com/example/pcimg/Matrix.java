@@ -3,6 +3,7 @@ package com.example.pcimg;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -186,6 +187,9 @@ public class Matrix implements Serializable {
             }
         }
         return new Matrix(sub);
+    }
+
+    public double[][] values() {return values;
     }
 
     /**
@@ -373,85 +377,38 @@ public class Matrix implements Serializable {
         return m.hadamard(Matrix.eye(m.getHeight()));
     }
 
-    /**
-     * Computes the eigenvalues and eigenvectors of a matrix using the Jacobi algorithm.
-     * The algorithm iteratively applies rotations until the off-diagonal elements are reduced.
-     * <p>
-     * <strong>Note:</strong> The algorithm prints iteration details to standard output.
-     * </p>
-     *
-     * @param A the matrix for which eigenvalues and eigenvectors are to be computed
-     * @return a {@link Pair} where the first element is the diagonal matrix of eigenvalues
-     *         and the second element is the matrix of eigenvectors
-     */
-    public static Pair eigen(Matrix A) {
-        int n = A.getHeight();
-        double tol = 1e-10;
-        int maxIter = 20000;
 
-        System.out.println("First Loop");
-        double[][] a = new double[n][n];
-        double[][] orig = A.getValues();
-        for (int i = 0; i < n; i++) {
-            System.arraycopy(orig[i], 0, a[i], 0, n);
-        }
+    public static Pair eigen(Matrix A) throws Exception {
 
-        System.out.println("Second Loop");
-
-        double[][] v = new double[n][n];
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                v[i][j] = (i == j) ? 1.0 : 0.0;
-            }
-        }
-
-        for (int iter = 0; iter < maxIter; iter++) {
-            System.out.println("Starting jacobi iteration " + iter);
-            int p = 0, q = 1;
-            double maxOff = 0.0;
-
-            double theta = 0.5 * Math.atan2(2 * a[p][q], a[q][q] - a[p][p]);
-            double cos = Math.cos(theta);
-            double sin = Math.sin(theta);
-
-            double app = a[p][p];
-            double aqq = a[q][q];
-            double apq = a[p][q];
-
-            double appNew = cos * cos * app - 2 * sin * cos * apq + sin * sin * aqq;
-            double aqqNew = sin * sin * app + 2 * sin * cos * apq + cos * cos * aqq;
-            a[p][p] = appNew;
-            a[q][q] = aqqNew;
-            a[p][q] = 0.0;
-            a[q][p] = 0.0;
-
-            for (int j = 0; j < n; j++) {
-                if (j != p && j != q) {
-                    double a_jp = a[j][p];
-                    double a_jq = a[j][q];
-                    double new_a_jp = cos * a_jp - sin * a_jq;
-                    double new_a_jq = sin * a_jp + cos * a_jq;
-                    a[j][p] = new_a_jp;
-                    a[p][j] = new_a_jp;
-                    a[j][q] = new_a_jq;
-                    a[q][j] = new_a_jq;
-                }
-            }
-
-            for (int i = 0; i < n; i++) {
-                double vip = v[i][p];
-                double viq = v[i][q];
-                v[i][p] = cos * vip - sin * viq;
-                v[i][q] = sin * vip + cos * viq;
-            }
-        }
-
-        double[][] d = new double[n][n];
-        for (int i = 0; i < n; i++) {
-            d[i][i] = a[i][i];
-        }
-        return new Pair(new Matrix(d), new Matrix(v));
+        return EigenCalculator.calculateEigen(A);
     }
+
+
+
+    /**
+     * Generates rounds (disjoint sets of pivot pairs) via round-robin (1-factorization).
+     * For an even number n, there are n-1 rounds; for odd n, we add one dummy index.
+     */
+
+    /**
+     * Computes the Frobenius norm of the off-diagonal elements.
+     */
+    public static double offDiagonalNorm(double[][] A) {
+        int n = A.length;
+        double sum = 0.0;
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                sum += A[i][j] * A[i][j];
+            }
+        }
+        return Math.sqrt(2.0 * sum);
+    }
+
+    /**
+     * The main parallel cyclic Jacobi eigenvalue method.
+     * @param A Input symmetric matrix.
+     * @return Pair of Matrices (Diagonal eigenvalue matrix D, and eigenvector matrix V).
+     */
 
     /**
      * Computes the Frobenius norm of the matrix.
