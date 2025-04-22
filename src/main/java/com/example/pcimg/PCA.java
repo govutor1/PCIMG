@@ -159,45 +159,4 @@ public class PCA implements Serializable {
         return x;
     }
 
-    /**
-     * Decodes the lower-dimensional representation back into the original data space without adding the average.
-     * <p>
-     * This method is similar to {@link #decode(Matrix)} but skips adding the mean back into the data.
-     * </p>
-     *
-     * @param encoded the encoded data matrix
-     * @return a new {@code Matrix} representing the decoded data without the mean adjustment
-     */
-    public Matrix decode_noavg(Matrix encoded) {
-        return encoded.dot(v.transpose());
-    }
-
-    /**
-     * Saves the current {@code PCA} object to a file using serialization.
-     *
-     * @param filename the path to the file where the PCA model will be saved
-     * @throws IOException if an I/O error occurs during writing to the file
-     */
-    public void saveToFile(String filename) throws IOException {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
-            oos.writeObject(this);
-            System.out.println("PCA saved to file: " + filename);
-        }
-    }
-
-    /**
-     * Loads a {@code PCA} object from a file.
-     *
-     * @param filename the path to the file from which to load the PCA model
-     * @return the {@code PCA} object loaded from the file
-     * @throws IOException            if an I/O error occurs during reading from the file
-     * @throws ClassNotFoundException if the class of the serialized object cannot be found
-     */
-    public static PCA loadFromFile(String filename) throws IOException, ClassNotFoundException {
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
-            PCA pca = (PCA) ois.readObject();
-            System.out.println("PCA loaded from file: " + filename);
-            return pca;
-        }
-    }
 }

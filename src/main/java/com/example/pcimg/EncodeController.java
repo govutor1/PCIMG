@@ -1,13 +1,13 @@
 package com.example.pcimg;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.event.ActionEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -16,22 +16,22 @@ import javafx.stage.Window;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.List;
 
 public class EncodeController {
-
+    private  pcadb db;
     @FXML private Label titleLabel;
-
     @FXML private Label imageLabel;
-
     @FXML private TextField imageTextField;
-
     @FXML private Label fitLabel;
-
     @FXML private TextField fitTextField;
-
     @FXML private Button encodeButton;
-
     @FXML private Button greetingButton;
+    @FXML private Spinner<String> pcaSpinner;
+
 
     /**
      * Opens a file chooser dialog to select an image file.
@@ -98,6 +98,22 @@ public class EncodeController {
      */
     @FXML
     private void initialize() {
+        try {
+            String url  = "jdbc:postgresql://localhost:5432/yippe";
+            String user = "postgres";
+            String pass = "postgres";
+            Connection con = DriverManager.getConnection(url, user, pass);
+            db = new pcadb(con);
+            db.createTable();
+            List<String> names = db.list();
+            ObservableList<String> items = FXCollections.observableArrayList(names);
+            SpinnerValueFactory<String> factory =
+                    new SpinnerValueFactory.ListSpinnerValueFactory<>(items);
+            pcaSpinner.setValueFactory(factory);
+
+        } catch (Exception ex) {
+            throw new RuntimeException("Failed to initialize PCA spinner", ex);
+        }
         encodeButton.setOnAction(e -> {
             try {
                 onEncodeButtonClick();
@@ -120,12 +136,18 @@ public class EncodeController {
      * @throws ClassNotFoundException if the PCA class cannot be found during deserialization
      */
     @FXML
-    private void onEncodeButtonClick() throws IOException, ClassNotFoundException {
+    private void onEncodeButtonClick() throws IOException, ClassNotFoundException, SQLException {
         String imagePath = imageTextField.getText();
-        String pcaPath   = fitTextField.getText();
+        String model=pcaSpinner.getValue();
+        PCA loadedPCA = db.loadPCA(model);
+        BufferedImage img0 = ImageUtils.loadImage(imagePath);
+        int totalFeatures = loadedPCA.avg.getColumnCount();
+        int pixelCount = totalFeatures / 3;
+        int H = (int)Math.sqrt(pixelCount * (1.0));
+        int W = pixelCount / H;
+        BufferedImage img=ImageUtils.resizeImage(img0,W,H);
 
-        PCA loadedPCA = PCA.loadFromFile(pcaPath);
-        BufferedImage img = ImageUtils.loadImage(imagePath);
+
 
         Matrix imgRow = ImageUtils.imageToRGBRowMatrix(img);
         Matrix encoded = loadedPCA.encode(imgRow);

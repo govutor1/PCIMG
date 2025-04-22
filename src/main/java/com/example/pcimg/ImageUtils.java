@@ -1,6 +1,7 @@
 package com.example.pcimg;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -10,6 +11,15 @@ public class ImageUtils {
     public static BufferedImage loadImage(String path) throws IOException {
         return ImageIO.read(new File(path));
     }
+    public static BufferedImage resizeImage(BufferedImage original, int targetWidth, int targetHeight) {
+        BufferedImage resized = new BufferedImage(targetWidth, targetHeight, original.getType());
+        Graphics2D g2 = resized.createGraphics();
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2.drawImage(original, 0, 0, targetWidth, targetHeight, null);
+        g2.dispose();
+        return resized;
+    }
+
 
     public static Matrix imageToGrayscaleRowMatrix(BufferedImage img) {
         int w = img.getWidth(), h = img.getHeight();

@@ -1,14 +1,14 @@
 package com.example.pcimg;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -20,17 +20,19 @@ import javax.imageio.ImageIO;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.List;
 
 
 public class DecodeController {
-
+    private  pcadb db;
     @FXML private Label titleLabel;
-
     @FXML private TextField compressedImageTextField;
-
     @FXML private TextField fitTextField;
-
     @FXML private Button decodeButton;
+    @FXML private Spinner<String> pcaSpinner;
 
     /**
      * Initializes the controller.
@@ -40,6 +42,22 @@ public class DecodeController {
      */
     @FXML
     private void initialize() {
+        try {
+            String url  = "jdbc:postgresql://localhost:5432/yippe";
+            String user = "postgres";
+            String pass = "postgres";
+            Connection con = DriverManager.getConnection(url, user, pass);
+            db = new pcadb(con);
+            db.createTable();
+            List<String> names = db.list();
+            ObservableList<String> items = FXCollections.observableArrayList(names);
+            SpinnerValueFactory<String> factory =
+                    new SpinnerValueFactory.ListSpinnerValueFactory<>(items);
+            pcaSpinner.setValueFactory(factory);
+
+        } catch (Exception ex) {
+            throw new RuntimeException("Failed to initialize PCA spinner", ex);
+        }
         decodeButton.setOnAction(evt -> {
             try {
                 onDecodeButtonClick();
@@ -61,11 +79,11 @@ public class DecodeController {
      * @throws ClassNotFoundException if the PCA class cannot be found during deserialization
      */
     @FXML
-    private void onDecodeButtonClick() throws IOException, ClassNotFoundException {
+    private void onDecodeButtonClick() throws IOException, ClassNotFoundException, SQLException {
         String matrixPath = compressedImageTextField.getText();
-        String pcaPath    = fitTextField.getText();
+        String model=pcaSpinner.getValue();
+        PCA loadedPCA = db.loadPCA(model);
 
-        PCA loadedPCA = PCA.loadFromFile(pcaPath);
         Matrix mat     = Matrix.loadFromFile(matrixPath);
         Matrix imat    = loadedPCA.decode(mat);
 

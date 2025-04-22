@@ -1,5 +1,7 @@
 package com.example.pcimg;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -8,6 +10,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -18,27 +21,40 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class FitController {
+    private pcadb db;
 
+    public TextField imageName;
     @FXML
     private Label titleLabel;
 
     @FXML
     private Label datasetLabel;
-
     @FXML
     private TextField datasetTextField;
-
     @FXML
     private Button fitButton;
 
 
     @FXML
     private void initialize() {
+        try {
+            String url  = "jdbc:postgresql://localhost:5432/yippe";
+            String user = "postgres";
+            String pass = "postgres";
+            Connection con = DriverManager.getConnection(url, user, pass);
+            db = new pcadb(con);
+            db.createTable();
+        } catch (Exception ex) {
+            throw new RuntimeException("Failed to initialize PCA spinner", ex);
+        }
     }
 
     /**
@@ -124,15 +140,14 @@ public class FitController {
      * @throws IOException if an error occurs during file I/O operations
      */
     @FXML
-    private void onFitButtonClick() throws IOException {
+    private void onFitButtonClick() throws IOException, SQLException {
         String filePath = datasetTextField.getText();
-
+        String name=imageName.getText();
         boolean skipHeader = true;
         boolean skipFirstColumn = false;
         double[][] csvData = loadCsv(filePath, skipHeader, skipFirstColumn);
         Matrix dataMatrix = new Matrix(csvData);
         System.out.println("Dataset dimensions: " + dataMatrix.getHeight() + " rows and " + dataMatrix.getWidth() + " columns");
-
         int width = (int) Math.sqrt(dataMatrix.getColumnCount()/3);
         int height = (int) Math.sqrt(dataMatrix.getColumnCount());
         double[][] firstSample = new double[1][csvData[0].length];
@@ -140,21 +155,14 @@ public class FitController {
         Matrix firstsamplemat=new Matrix(firstSample);
         System.out.println(firstsamplemat);
         System.out.println("YPPIEW");
-
-
             BufferedImage image =  ImageUtils.rowMatrixToImage(firstsamplemat, width, width);
             Matrix imagemat=ImageUtils.imageToRGBRowMatrix(image);
             image=ImageUtils.rowMatrixToImage(imagemat,width,width);
             CSVLoader.displayImage(image, "First Sample");
         System.out.println(imagemat);
-
-
-
-
         PCA pca = new PCA(dataMatrix.getWidth());
-        pca.fit(dataMatrix, dataMatrix.getColumnCount() *8/10);
-        pca.saveToFile("PCAMagnivFile");
-        ;
+        pca.fit(dataMatrix, dataMatrix.getColumnCount() *6/10);
+        db.savePCA(name,pca);
         for (int i = 0; i <10 ; i++) {
             System.out.println(i);
             System.out.println(pca.v.getC(i));

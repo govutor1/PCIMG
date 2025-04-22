@@ -21,11 +21,8 @@
         <Button text="Browse…" onAction="#onBrowseCompressed"/>
     </HBox>
 
-    <Label text="Select PCA fit file:"/>
-    <HBox spacing="5">
-        <TextField fx:id="fitTextField" HBox.hgrow="ALWAYS"/>
-        <Button text="Browse…" onAction="#onBrowseFit"/>
-    </HBox>
+    <Label text="Select PCA model:"/>
+    <Spinner fx:id="pcaSpinner" prefWidth="250.0" />
 
     <HBox spacing="10">
         <Button fx:id="decodeButton" text="Decode"/>

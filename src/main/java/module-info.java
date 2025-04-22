@@ -2,6 +2,7 @@ module com.example.pcimg {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.desktop;
+    requires java.sql;
 
 
     opens com.example.pcimg to javafx.fxml;

@@ -20,11 +20,9 @@
          <Button text="Browse…" onAction="#onBrowseImage"/>
       </HBox>
 
-      <Label text="Select PCA fit file:"/>
-      <HBox spacing="5">
-         <TextField fx:id="fitTextField" HBox.hgrow="ALWAYS" />
-         <Button text="Browse…" onAction="#onBrowseFit"/>
-      </HBox>
+      <Label text="Select PCA model:"/>
+      <Spinner fx:id="pcaSpinner" prefWidth="250.0" />
+
 
       <Button fx:id="encodeButton" text="Encode"/>
       <Button fx:id="greetingButton"
