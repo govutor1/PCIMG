@@ -31,7 +31,6 @@ public class ImageUtils {
                 int r = (rgb >> 16) & 0xFF;
                 int g = (rgb >> 8) & 0xFF;
                 int b = (rgb) & 0xFF;
-                // convert to luminance (grayscale)
                 double gray = (0.299 * r + 0.587 * g + 0.114 * b) / 255.0;
                 data[0][y * w + x] = gray;
             }
@@ -72,30 +71,19 @@ public class ImageUtils {
      * @return       the reconstructed BufferedImage.
      */
     public static BufferedImage rowMatrixToImage(Matrix matrix, int w, int h) {
-        // Create a new BufferedImage with RGB color model.
         BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
         double[][] data = matrix.getValues();
-
-        // Since the matrix is a single row, we access the first row.
         double[] row = data[0];
         int pixelCount = w * h;
-
-        // Loop over each pixel coordinate.
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
                 int idx = y * w + x;
-
-                // For each channel, convert from normalized value [0,1] to integer in [0,255].
                 int r = (int)(row[idx] );
                 int g = (int)(row[pixelCount + idx] );
                 int b = (int)(row[2 * pixelCount + idx] );
-
-                // Clamp the values to ensure they are within 0 to 255.
                 r = Math.min(255, Math.max(0, r));
                 g = Math.min(255, Math.max(0, g));
                 b = Math.min(255, Math.max(0, b));
-
-                // Combine the color channels back into a single integer.
                 int rgb = (r << 16) | (g << 8) | b;
                 img.setRGB(x, y, rgb);
             }

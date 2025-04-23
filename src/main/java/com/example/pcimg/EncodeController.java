@@ -56,28 +56,7 @@ public class EncodeController {
         }
     }
 
-    /**
-     * Opens a file chooser dialog to select a PCA fit file.
-     * <p>
-     * The method filters for binary files (with extensions *.bin and *.dat) and sets the selected file's
-     * absolute path to {@code fitTextField}.
-     * </p>
-     *
-     * @param evt the action event triggered by the user
-     */
-    @FXML
-    private void onBrowseFit(ActionEvent evt) {
-        FileChooser chooser = new FileChooser();
-        chooser.setTitle("Select PCA Fit File");
-        chooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("Binary Files", "*.bin", "*.dat")
-        );
 
-        File file = chooser.showOpenDialog(getWindow(evt));
-        if (file != null) {
-            fitTextField.setText(file.getAbsolutePath());
-        }
-    }
 
     /**
      * Retrieves the {@link Window} associated with the given {@link ActionEvent}.

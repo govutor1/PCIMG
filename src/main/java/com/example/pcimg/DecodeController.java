@@ -170,17 +170,12 @@ public class DecodeController {
         int imageType = isColor
                 ? BufferedImage.TYPE_INT_RGB
                 : BufferedImage.TYPE_BYTE_GRAY;
-
         BufferedImage img = new BufferedImage(width, height, imageType);
-
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 if (isColor) {
-                    // Red channel
                     int r = to8Bit(mat.get(y, x));
-                    // Green channel
                     int g = to8Bit(mat.get(y, x + width));
-                    // Blue channel
                     int b = to8Bit(mat.get(y, x + 2 * width));
                     int rgb = (r << 16) | (g << 8) | b;
                     img.setRGB(x, y, rgb);
@@ -191,7 +186,6 @@ public class DecodeController {
                 }
             }
         }
-
         if (scaleFactor != 1) {
             int sw = width * scaleFactor;
             int sh = height * scaleFactor;
