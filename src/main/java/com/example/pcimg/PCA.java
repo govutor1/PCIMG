@@ -150,7 +150,6 @@ public class PCA implements Serializable {
         Matrix x = encoded.dot(v.transpose());
         int samples = x.getHeight();
         int features = x.getWidth();
-        // Add the average back to each sample.
         for (int i = 0; i < samples; i++) {
             for (int j = 0; j < features; j++) {
                 x.set(i, j, x.get(i, j) + avg.get(0, j));

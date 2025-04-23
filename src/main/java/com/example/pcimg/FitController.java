@@ -158,7 +158,6 @@ public class FitController {
             BufferedImage image =  ImageUtils.rowMatrixToImage(firstsamplemat, width, width);
             Matrix imagemat=ImageUtils.imageToRGBRowMatrix(image);
             image=ImageUtils.rowMatrixToImage(imagemat,width,width);
-            CSVLoader.displayImage(image, "First Sample");
         System.out.println(imagemat);
         PCA pca = new PCA(dataMatrix.getWidth());
         pca.fit(dataMatrix, dataMatrix.getColumnCount() *6/10);
