@@ -8,36 +8,20 @@ import java.io.IOException;
 
 public class ImageUtils {
 
-    public static BufferedImage loadImage(String path) throws IOException {
+    public static BufferedImage load(String path) throws IOException {
         return ImageIO.read(new File(path));
     }
-    public static BufferedImage resizeImage(BufferedImage original, int targetWidth, int targetHeight) {
-        BufferedImage resized = new BufferedImage(targetWidth, targetHeight, original.getType());
-        Graphics2D g2 = resized.createGraphics();
-        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g2.drawImage(original, 0, 0, targetWidth, targetHeight, null);
-        g2.dispose();
-        return resized;
+    public static BufferedImage resizeImage(BufferedImage original, int width, int height) {
+        BufferedImage resized_image = new BufferedImage(width, height, original.getType());
+        Graphics2D graphics_for_image = resized_image.createGraphics();
+        graphics_for_image.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        graphics_for_image.drawImage(original, 0, 0, width, height, null);
+        graphics_for_image.dispose();
+        return resized_image;
     }
 
 
-    public static Matrix imageToGrayscaleRowMatrix(BufferedImage img) {
-        int w = img.getWidth(), h = img.getHeight();
-        double[][] data = new double[1][w * h];
 
-        for (int y = 0; y < h; y++) {
-            for (int x = 0; x < w; x++) {
-                int rgb = img.getRGB(x, y);
-                int r = (rgb >> 16) & 0xFF;
-                int g = (rgb >> 8) & 0xFF;
-                int b = (rgb) & 0xFF;
-                double gray = (0.299 * r + 0.587 * g + 0.114 * b) / 255.0;
-                data[0][y * w + x] = gray;
-            }
-        }
-
-        return new Matrix(data);
-    }
 
     public static Matrix imageToRGBRowMatrix(BufferedImage img) {
         int w = img.getWidth(), h = img.getHeight();
@@ -74,13 +58,13 @@ public class ImageUtils {
         BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
         double[][] data = matrix.getValues();
         double[] row = data[0];
-        int pixelCount = w * h;
+        int pixels = w * h;
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
                 int idx = y * w + x;
                 int r = (int)(row[idx] );
-                int g = (int)(row[pixelCount + idx] );
-                int b = (int)(row[2 * pixelCount + idx] );
+                int g = (int)(row[pixels + idx] );
+                int b = (int)(row[2 * pixels + idx] );
                 r = Math.min(255, Math.max(0, r));
                 g = Math.min(255, Math.max(0, g));
                 b = Math.min(255, Math.max(0, b));

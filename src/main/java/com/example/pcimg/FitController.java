@@ -30,17 +30,12 @@ import java.util.List;
 
 public class FitController {
     private pcadb db;
-
     public TextField imageName;
-    @FXML
-    private Label titleLabel;
-
     @FXML
     private Label datasetLabel;
     @FXML
     private TextField datasetTextField;
-    @FXML
-    private Button fitButton;
+
 
 
     @FXML

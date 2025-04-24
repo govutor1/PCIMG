@@ -18,14 +18,13 @@
     <Label text="Select compressed matrix:"/>
     <HBox spacing="5">
         <TextField fx:id="compressedImageTextField" HBox.hgrow="ALWAYS"/>
-        <Button text="Browse…" onAction="#onBrowseCompressed"/>
+        <Button text="Browse…" onAction="#Browse"/>
     </HBox>
 
     <Label text="Select PCA model:"/>
     <Spinner fx:id="pcaSpinner" prefWidth="250.0" />
 
-    <HBox spacing="10">
+
         <Button fx:id="decodeButton" text="Decode"/>
         <Button text="Go to Greeting Screen" onAction="#handleGreetingScreen"/>
-    </HBox>
 </VBox>

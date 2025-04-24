@@ -23,13 +23,10 @@ import java.util.List;
 
 public class EncodeController {
     private  pcadb db;
-    @FXML private Label titleLabel;
-    @FXML private Label imageLabel;
+
     @FXML private TextField imageTextField;
-    @FXML private Label fitLabel;
-    @FXML private TextField fitTextField;
     @FXML private Button encodeButton;
-    @FXML private Button greetingButton;
+
     @FXML private Spinner<String> pcaSpinner;
 
 
@@ -46,9 +43,7 @@ public class EncodeController {
     private void onBrowseImage(ActionEvent evt) {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Select Image File");
-        chooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.bmp")
-        );
+
 
         File file = chooser.showOpenDialog(getWindow(evt));
         if (file != null) {
@@ -119,19 +114,25 @@ public class EncodeController {
         String imagePath = imageTextField.getText();
         String model=pcaSpinner.getValue();
         PCA loadedPCA = db.loadPCA(model);
-        BufferedImage img0 = ImageUtils.loadImage(imagePath);
+        BufferedImage img0 = ImageUtils.load(imagePath);
         int totalFeatures = loadedPCA.avg.getColumnCount();
         int pixelCount = totalFeatures / 3;
         int H = (int)Math.sqrt(pixelCount * (1.0));
         int W = pixelCount / H;
         BufferedImage img=ImageUtils.resizeImage(img0,W,H);
 
-
+        File inputFile = new File(imagePath);
+        String originalName = inputFile.getName();
+        int dot = originalName.lastIndexOf('.');
+        String baseName = (dot > 0)
+                ? originalName.substring(0, dot)
+                : originalName;
+        String encodedFileName = "Encoded_" + baseName + ".bin";
 
         Matrix imgRow = ImageUtils.imageToRGBRowMatrix(img);
         Matrix encoded = loadedPCA.encode(imgRow);
         System.out.println(loadedPCA.getEigenvector(0).norm());
-        encoded.saveToFile("encoded_matrix.bin");
+        encoded.saveToFile(encodedFileName);
 
         System.out.println("Encoded shape: " + encoded.getHeight() + "×" + encoded.getWidth());
     }

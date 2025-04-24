@@ -11,7 +11,7 @@
       alignment="CENTER"
       spacing="20"
       style="-fx-padding: 20;">
-    <Label text="Welcome to the Application!" style="-fx-font-size: 18px;"/>
+    <Label text="PCIMG" style="-fx-font-size: 18px;"/>
     <Button text="Encode" onAction="#handleEncode"/>
     <Button text="Decode" onAction="#handleDecode"/>
     <Button text="Fit" onAction="#handleFit"/>

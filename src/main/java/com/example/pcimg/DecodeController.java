@@ -83,13 +83,12 @@ public class DecodeController {
         String matrixPath = compressedImageTextField.getText();
         String model=pcaSpinner.getValue();
         PCA loadedPCA = db.loadPCA(model);
-
-        Matrix mat     = Matrix.loadFromFile(matrixPath);
-        Matrix imat    = loadedPCA.decode(mat);
-
-        BufferedImage decodedImage = ImageUtils.rowMatrixToImage(imat, (int) Math.sqrt(imat.getWidth()*imat.getHeight()/3),(int) Math.sqrt(imat.getWidth()*imat.getHeight()/3));
+        Matrix mat= Matrix.loadFromFile(matrixPath);
+        Matrix imat= loadedPCA.decode(mat);
+        BufferedImage decoded_img = ImageUtils.rowMatrixToImage(imat, (int) Math.sqrt(imat.getWidth()*imat.getHeight()/3),(int) Math.sqrt(imat.getWidth()*imat.getHeight()/3));
         File out = new File("decoded_output.png");
-        ImageIO.write(decodedImage, "png", out);
+
+        ImageIO.write(decoded_img, "png", out);
         System.out.println("Decoded image saved to: " + out.getAbsolutePath());
         System.out.println("encoded");
         System.out.println(mat);
@@ -107,7 +106,7 @@ public class DecodeController {
      * @param evt the action event triggered by the user
      */
     @FXML
-    private void onBrowseCompressed(ActionEvent evt) {
+    private void Browse(ActionEvent evt) {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Select Compressed Matrix File");
         chooser.getExtensionFilters().add(
@@ -119,27 +118,6 @@ public class DecodeController {
         }
     }
 
-    /**
-     * Opens a file chooser to browse and select a PCA fit file.
-     * <p>
-     * The method filters for binary files with extensions ".bin" or ".dat" and sets the selected file's
-     * absolute path into the {@code fitTextField}.
-     * </p>
-     *
-     * @param evt the action event triggered by the user
-     */
-    @FXML
-    private void onBrowseFit(ActionEvent evt) {
-        FileChooser chooser = new FileChooser();
-        chooser.setTitle("Select PCA Fit File");
-        chooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("Binary Files", "*.bin", "*.dat")
-        );
-        File file = chooser.showOpenDialog(getWindow(evt));
-        if (file != null) {
-            fitTextField.setText(file.getAbsolutePath());
-        }
-    }
 
     /**
      * Retrieves the {@link Window} associated with the given {@link ActionEvent}.
@@ -240,14 +218,14 @@ public class DecodeController {
      */
     public static BufferedImage toBufferedImage(Image img) {
         if (img instanceof BufferedImage) return (BufferedImage)img;
-        BufferedImage bimage = new BufferedImage(
+        BufferedImage bimg = new BufferedImage(
                 img.getWidth(null),
                 img.getHeight(null),
                 BufferedImage.TYPE_INT_ARGB
         );
-        Graphics2D g2d = bimage.createGraphics();
-        g2d.drawImage(img, 0, 0, null);
-        g2d.dispose();
-        return bimage;
+        Graphics2D graphics = bimg.createGraphics();
+        graphics.drawImage(img, 0, 0, null);
+        graphics.dispose();
+        return bimg;
     }
 }
