@@ -101,25 +101,22 @@ public class pcadb {
 
     }
 
-    /**
-     * Example usage:
-     *
-     * public static void main(String[] args) throws Exception {
-     *     String url = "jdbc:postgresql://localhost:5432/mydb";
-     *     String user = "youruser";
-     *     String pass = "yourpass";
-     *     try (Connection conn = DriverManager.getConnection(url, user, pass)) {
-     *         PCADAO dao = new PCADAO(conn);
-     *         dao.createTable();
-     *
-     *         // Fit and save a PCA
-     *         PCA pca = new PCA(numFeatures);
-     *         pca.fit(dataMatrix, outFeatures);
-     *         dao.savePCA("myPCA", pca);
-     *
-     *         // Later, load it back:
-     *         PCA loaded = dao.loadPCA("myPCA");
-     *     }
-     * }
-     */
+    public void importPCAFromFile(String name, String filePath)
+            throws IOException, ClassNotFoundException, SQLException {
+        PCA pca;
+        try (FileInputStream fis = new FileInputStream(filePath);
+             ObjectInputStream ois = new ObjectInputStream(fis)) {
+            pca = (PCA) ois.readObject();
+        }
+        savePCA(name, pca);
+    }
+    public void deletePCA(String name) throws SQLException {
+        String sql = "DELETE FROM pca_models WHERE name = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, name);
+            ps.executeUpdate();
+        }
+    }
 }
+
+
